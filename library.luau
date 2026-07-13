@@ -6,7 +6,7 @@ local Players = game:GetService("Players")
 
 local Library = {}
 
--- İnternet Trendi Ultra-Sleek Mat Karanlık Temalar
+-- Modern Mat Temalar
 local Themes = {
     Blood = {
         MainBg = Color3.fromRGB(13, 9, 9), TopBg = Color3.fromRGB(18, 11, 11),
@@ -22,13 +22,32 @@ local Themes = {
     }
 }
 
--- Modern Lucide / Vektörel Asset ID'leri
+-- Hazır İkon Kütüphanesi (Lucide/Material)
 local Icons = {
     Close = "rbxassetid://10747384394",
     Minimize = "rbxassetid://10747373151",
     Chevron = "rbxassetid://10747372702",
-    Info = "rbxassetid://10747379701" -- Bildirimler için modern info ikonu
+    Info = "rbxassetid://10747379701",
+    Home = "rbxassetid://10747381515",
+    Settings = "rbxassetid://10747383274",
+    User = "rbxassetid://10747384318",
+    Shield = "rbxassetid://10747383041",
+    Sword = "rbxassetid://10747383161",
+    Code = "rbxassetid://10747373151"
 }
+
+-- İkon Çözümleyici (Kullanıcı hazır isim veya kendi ID'sini girebilir)
+local function GetIcon(iconInput)
+    if not iconInput then return nil end
+    if Icons[iconInput] then return Icons[iconInput] end
+    if type(iconInput) == "string" and (string.find(iconInput, "rbxassetid://") or string.find(iconInput, "http")) then 
+        return iconInput 
+    end
+    if tonumber(iconInput) then 
+        return "rbxassetid://" .. tostring(iconInput) 
+    end
+    return nil
+end
 
 local function Tween(instance, properties, duration, style, dir)
     local tweenInfo = TweenInfo.new(duration or 0.2, style or Enum.EasingStyle.Quad, dir or Enum.EasingDirection.Out)
@@ -45,7 +64,7 @@ local function GetSafeGui()
     return gui
 end
 
--- === ASSET DESTEKLİ BİLDİRİM SİSTEMİ ===
+-- === BİLDİRİM SİSTEMİ ===
 local NotifGui = GetSafeGui()
 NotifGui.Name = "SleekUI_Notifications"
 
@@ -61,19 +80,15 @@ NotifLayout.Padding = UDim.new(0, 8)
 
 function Library:Notify(title, text, duration)
     duration = duration or 3
-    local theme = Themes.Dark -- Varsayılan bildirim teması
+    local theme = Themes.Dark 
     
     local NotifFrame = Instance.new("CanvasGroup", NotifContainer)
     NotifFrame.Size = UDim2.new(1, 0, 0, 60)
     NotifFrame.BackgroundColor3 = theme.MainBg
     NotifFrame.GroupTransparency = 1
     Instance.new("UICorner", NotifFrame).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", NotifFrame).Color = theme.Outline
     
-    local Stroke = Instance.new("UIStroke", NotifFrame)
-    Stroke.Color = theme.Outline
-    Stroke.Thickness = 1
-    
-    -- Bildirim İkonu
     local NotifIcon = Instance.new("ImageLabel", NotifFrame)
     NotifIcon.Size = UDim2.new(0, 18, 0, 18)
     NotifIcon.Position = UDim2.new(0, 12, 0.5, -9)
@@ -102,7 +117,6 @@ function Library:Notify(title, text, duration)
     TextLbl.TextXAlignment = Enum.TextXAlignment.Left
     TextLbl.TextWrapped = true
 
-    -- Sağa doğru kayarak ve netleşerek açılma efekti
     NotifFrame.Position = UDim2.new(0, 50, 0, 0)
     Tween(NotifFrame, {GroupTransparency = 0, Position = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Quint)
     
@@ -124,23 +138,18 @@ function Library.CreateLib(titleText, themeName, toggleKey)
     ScreenGui.Name = "SleekMainUI"
 
     local MainFrame = Instance.new("CanvasGroup", ScreenGui)
-    MainFrame.Size = UDim2.new(0, 560, 0, 380)
+    MainFrame.Size = UDim2.new(0, 580, 0, 400)
     MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     MainFrame.BackgroundColor3 = theme.MainBg
     MainFrame.GroupTransparency = 1
     MainFrame.ClipsDescendants = true
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+    Instance.new("UIStroke", MainFrame).Color = theme.Outline
 
-    local MainStroke = Instance.new("UIStroke", MainFrame)
-    MainStroke.Color = theme.Outline
-    MainStroke.Thickness = 1
-
-    -- Bozulmaları Önleyen Mikro Ölçekleyici (%4 Esneme Oranı)
     local UiScale = Instance.new("UIScale", MainFrame)
     UiScale.Scale = 0.96
 
-    -- Yumuşak Giriş Animasyonu
     Tween(MainFrame, {GroupTransparency = 0}, 0.25, Enum.EasingStyle.Quint)
     Tween(UiScale, {Scale = 1}, 0.25, Enum.EasingStyle.Quint)
 
@@ -165,7 +174,6 @@ function Library.CreateLib(titleText, themeName, toggleKey)
     Title.Font = Enum.Font.GothamBold
     Title.TextXAlignment = Enum.TextXAlignment.Left
 
-    -- Kapat / Küçült Asset Butonları
     local CloseBtn = Instance.new("ImageButton", Topbar)
     CloseBtn.Size = UDim2.new(0, 16, 0, 16)
     CloseBtn.Position = UDim2.new(1, -28, 0.5, -8)
@@ -180,7 +188,6 @@ function Library.CreateLib(titleText, themeName, toggleKey)
     MinBtn.Image = Icons.Minimize
     MinBtn.ImageColor3 = theme.Text
 
-    -- Görüntü Kirliliği Yaratmayan Hassas Fade-Scale Mekanizması
     local uiVisible = true
     local animating = false
     local function ToggleUI()
@@ -215,7 +222,6 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         if not processed and input.KeyCode == toggleKey then ToggleUI() end
     end)
 
-    -- Sürükleme Sistemi
     local dragging, dragInput, dragStart, startPos
     Topbar.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -235,37 +241,51 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         end
     end)
 
-    -- Sidebar
     local TabContainer = Instance.new("ScrollingFrame", MainFrame)
-    TabContainer.Size = UDim2.new(0, 135, 1, -38)
+    TabContainer.Size = UDim2.new(0, 140, 1, -38)
     TabContainer.Position = UDim2.new(0, 0, 0, 38)
     TabContainer.BackgroundColor3 = theme.TabBg
     TabContainer.BorderSizePixel = 0
     TabContainer.ScrollBarThickness = 0
-    
-    local TabStroke = Instance.new("UIStroke", TabContainer)
-    TabStroke.Color = theme.Outline
-    TabStroke.Thickness = 1
-
+    Instance.new("UIStroke", TabContainer).Color = theme.Outline
     local UIListLayout_Tabs = Instance.new("UIListLayout", TabContainer)
     UIListLayout_Tabs.Padding = UDim.new(0, 2)
 
     local ContentContainer = Instance.new("Frame", MainFrame)
-    ContentContainer.Size = UDim2.new(1, -135, 1, -38)
-    ContentContainer.Position = UDim2.new(0, 135, 0, 38)
+    ContentContainer.Size = UDim2.new(1, -140, 1, -38)
+    ContentContainer.Position = UDim2.new(0, 140, 0, 38)
     ContentContainer.BackgroundTransparency = 1
 
     local firstTab = true
 
-    function Window:NewTab(tabName)
+    -- Sekmeye İkon Desteği Eklendi
+    function Window:NewTab(tabName, iconInput)
         local TabBtn = Instance.new("TextButton", TabContainer)
         TabBtn.Size = UDim2.new(1, 0, 0, 36)
         TabBtn.BackgroundTransparency = 1
-        TabBtn.Text = "   " .. tabName
-        TabBtn.TextColor3 = theme.Text
-        TabBtn.Font = Enum.Font.GothamMedium
-        TabBtn.TextSize = 12
-        TabBtn.TextXAlignment = Enum.TextXAlignment.Left
+        TabBtn.Text = ""
+        
+        local parsedIcon = GetIcon(iconInput)
+        local hasIcon = parsedIcon ~= nil
+
+        local TabIcon = Instance.new("ImageLabel", TabBtn)
+        if hasIcon then
+            TabIcon.Size = UDim2.new(0, 16, 0, 16)
+            TabIcon.Position = UDim2.new(0, 12, 0.5, -8)
+            TabIcon.BackgroundTransparency = 1
+            TabIcon.Image = parsedIcon
+            TabIcon.ImageColor3 = firstTab and theme.Accent or theme.Text
+        end
+
+        local TabLbl = Instance.new("TextLabel", TabBtn)
+        TabLbl.Size = UDim2.new(1, hasIcon and -40 or -20, 1, 0)
+        TabLbl.Position = UDim2.new(0, hasIcon and 36 or 15, 0, 0)
+        TabLbl.BackgroundTransparency = 1
+        TabLbl.Text = tabName
+        TabLbl.TextColor3 = firstTab and theme.Accent or theme.Text
+        TabLbl.Font = Enum.Font.GothamMedium
+        TabLbl.TextSize = 12
+        TabLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         local Indicator = Instance.new("Frame", TabBtn)
         Indicator.Size = UDim2.new(0, 3, 1, 0)
@@ -282,12 +302,9 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         Page.Visible = firstTab
 
         local UIListLayout_Page = Instance.new("UIListLayout", Page)
-        UIListLayout_Page.Padding = UDim.new(0, 5)
+        UIListLayout_Page.Padding = UDim.new(0, 6)
 
-        if firstTab then
-            TabBtn.TextColor3 = theme.Accent
-            firstTab = false
-        end
+        if firstTab then firstTab = false end
 
         TabBtn.MouseButton1Click:Connect(function()
             for _, child in pairs(ContentContainer:GetChildren()) do
@@ -295,12 +312,17 @@ function Library.CreateLib(titleText, themeName, toggleKey)
             end
             for _, child in pairs(TabContainer:GetChildren()) do
                 if child:IsA("TextButton") then 
-                    Tween(child, {TextColor3 = theme.Text}, 0.2)
-                    Tween(child.Frame, {BackgroundTransparency = 1}, 0.2)
+                    local lbl = child:FindFirstChildOfClass("TextLabel")
+                    local icn = child:FindFirstChildOfClass("ImageLabel")
+                    local ind = child:FindFirstChild("Frame")
+                    if lbl then Tween(lbl, {TextColor3 = theme.Text}, 0.2) end
+                    if icn then Tween(icn, {ImageColor3 = theme.Text}, 0.2) end
+                    if ind then Tween(ind, {BackgroundTransparency = 1}, 0.2) end
                 end
             end
             Page.Visible = true
-            Tween(TabBtn, {TextColor3 = theme.Accent}, 0.2)
+            Tween(TabLbl, {TextColor3 = theme.Accent}, 0.2)
+            if hasIcon then Tween(TabIcon, {ImageColor3 = theme.Accent}, 0.2) end
             Tween(Indicator, {BackgroundTransparency = 0}, 0.2)
         end)
 
@@ -311,17 +333,35 @@ function Library.CreateLib(titleText, themeName, toggleKey)
             SectionLabel.Size = UDim2.new(1, 0, 0, 22)
             SectionLabel.BackgroundTransparency = 1
             SectionLabel.Text = sectionName:upper()
-            SectionLabel.TextColor3 = Color3.fromRGB(90, 90, 90)
+            SectionLabel.TextColor3 = Color3.fromRGB(100, 100, 100)
             SectionLabel.TextSize = 10
             SectionLabel.Font = Enum.Font.GothamBold
             SectionLabel.TextXAlignment = Enum.TextXAlignment.Left
 
             local SectionObj = {}
 
-            -- 1. Premium Buton
+            -- 1. YENİ BİLEŞEN: Label (Bilgi Metni)
+            function SectionObj:NewLabel(text)
+                local LblFrame = Instance.new("Frame", Page)
+                LblFrame.Size = UDim2.new(1, 0, 0, 28)
+                LblFrame.BackgroundTransparency = 1
+
+                local LblText = Instance.new("TextLabel", LblFrame)
+                LblText.Size = UDim2.new(1, -10, 1, 0)
+                LblText.Position = UDim2.new(0, 5, 0, 0)
+                LblText.BackgroundTransparency = 1
+                LblText.Text = text
+                LblText.TextColor3 = Color3.fromRGB(180, 180, 180)
+                LblText.Font = Enum.Font.Gotham
+                LblText.TextSize = 11
+                LblText.TextXAlignment = Enum.TextXAlignment.Left
+                LblText.TextWrapped = true
+            end
+
+            -- 2. Buton (İkon Destekli)
             function SectionObj:NewButton(btnName, btnDesc, callback)
                 local Button = Instance.new("TextButton", Page)
-                Button.Size = UDim2.new(1, 0, 0, 40)
+                Button.Size = UDim2.new(1, 0, 0, 42)
                 Button.BackgroundColor3 = theme.ElementBg
                 Button.Text = ""
                 Button.AutoButtonColor = false
@@ -330,7 +370,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
 
                 local Title = Instance.new("TextLabel", Button)
                 Title.Size = UDim2.new(1, -20, 0.5, 0)
-                Title.Position = UDim2.new(0, 12, 0, 4)
+                Title.Position = UDim2.new(0, 12, 0, 5)
                 Title.BackgroundTransparency = 1
                 Title.Text = btnName
                 Title.TextColor3 = theme.Text
@@ -350,14 +390,19 @@ function Library.CreateLib(titleText, themeName, toggleKey)
 
                 Button.MouseEnter:Connect(function() Tween(Button, {BackgroundColor3 = theme.HoverBg}, 0.15) end)
                 Button.MouseLeave:Connect(function() Tween(Button, {BackgroundColor3 = theme.ElementBg}, 0.15) end)
-                Button.MouseButton1Click:Connect(function() if callback then pcall(callback) end end)
+                Button.MouseButton1Click:Connect(function() 
+                    Tween(Button, {BackgroundColor3 = theme.Outline}, 0.1)
+                    task.wait(0.1)
+                    Tween(Button, {BackgroundColor3 = theme.HoverBg}, 0.1)
+                    if callback then pcall(callback) end 
+                end)
             end
 
-            -- 2. Premium Toggle
+            -- 3. MODERNİZE EDİLMİŞ GÖRÜNÜR TOGGLE
             function SectionObj:NewToggle(toggleName, default, callback)
                 local state = default or false
                 local Toggle = Instance.new("TextButton", Page)
-                Toggle.Size = UDim2.new(1, 0, 0, 36)
+                Toggle.Size = UDim2.new(1, 0, 0, 38)
                 Toggle.BackgroundColor3 = theme.ElementBg
                 Toggle.Text = ""
                 Toggle.AutoButtonColor = false
@@ -365,7 +410,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Instance.new("UIStroke", Toggle).Color = theme.Outline
 
                 local Title = Instance.new("TextLabel", Toggle)
-                Title.Size = UDim2.new(1, -60, 1, 0)
+                Title.Size = UDim2.new(1, -70, 1, 0)
                 Title.Position = UDim2.new(0, 12, 0, 0)
                 Title.BackgroundTransparency = 1
                 Title.Text = toggleName
@@ -374,30 +419,80 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Title.TextSize = 12
                 Title.TextXAlignment = Enum.TextXAlignment.Left
 
-                local Frame = Instance.new("Frame", Toggle)
-                Frame.Size = UDim2.new(0, 34, 0, 18)
-                Frame.Position = UDim2.new(1, -46, 0.5, -9)
-                Frame.BackgroundColor3 = state and theme.Accent or theme.TopBg
-                Instance.new("UICorner", Frame).CornerRadius = UDim.new(1, 0)
+                -- Switch Arka Planı (Kapalıyken Koyu Gri, Açıkken Tema Rengi)
+                local SwitchBg = Instance.new("Frame", Toggle)
+                SwitchBg.Size = UDim2.new(0, 38, 0, 20)
+                SwitchBg.Position = UDim2.new(1, -50, 0.5, -10)
+                SwitchBg.BackgroundColor3 = state and theme.Accent or Color3.fromRGB(40, 40, 40)
+                Instance.new("UICorner", SwitchBg).CornerRadius = UDim.new(1, 0)
+                Instance.new("UIStroke", SwitchBg).Color = Color3.fromRGB(60, 60, 60)
 
-                local Knob = Instance.new("Frame", Frame)
+                -- Switch Topuzu
+                local Knob = Instance.new("Frame", SwitchBg)
                 Knob.Size = UDim2.new(0, 14, 0, 14)
-                Knob.Position = state and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)
+                Knob.Position = state and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)
                 Knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
                 Instance.new("UICorner", Knob).CornerRadius = UDim.new(1, 0)
 
                 Toggle.MouseButton1Click:Connect(function()
                     state = not state
-                    Tween(Frame, {BackgroundColor3 = state and theme.Accent or theme.TopBg}, 0.15)
-                    Tween(Knob, {Position = state and UDim2.new(1, -16, 0.5, -7) or UDim2.new(0, 2, 0.5, -7)}, 0.15)
+                    Tween(SwitchBg, {BackgroundColor3 = state and theme.Accent or Color3.fromRGB(40, 40, 40)}, 0.2)
+                    Tween(Knob, {Position = state and UDim2.new(1, -17, 0.5, -7) or UDim2.new(0, 3, 0.5, -7)}, 0.2, Enum.EasingStyle.Quint)
                     if callback then pcall(callback, state) end
                 end)
             end
 
-            -- 3. Premium Slider
+            -- 4. YENİ BİLEŞEN: TextBox (Veri Girişi)
+            function SectionObj:NewTextBox(boxName, placeholder, callback)
+                local Box = Instance.new("Frame", Page)
+                Box.Size = UDim2.new(1, 0, 0, 40)
+                Box.BackgroundColor3 = theme.ElementBg
+                Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 5)
+                Instance.new("UIStroke", Box).Color = theme.Outline
+
+                local Title = Instance.new("TextLabel", Box)
+                Title.Size = UDim2.new(0.5, 0, 1, 0)
+                Title.Position = UDim2.new(0, 12, 0, 0)
+                Title.BackgroundTransparency = 1
+                Title.Text = boxName
+                Title.TextColor3 = theme.Text
+                Title.Font = Enum.Font.GothamMedium
+                Title.TextSize = 12
+                Title.TextXAlignment = Enum.TextXAlignment.Left
+
+                local InputBg = Instance.new("Frame", Box)
+                InputBg.Size = UDim2.new(0.45, 0, 0, 26)
+                InputBg.Position = UDim2.new(1, -10, 0.5, -13)
+                InputBg.AnchorPoint = Vector2.new(1, 0)
+                InputBg.BackgroundColor3 = theme.TopBg
+                Instance.new("UICorner", InputBg).CornerRadius = UDim.new(0, 4)
+                local InputStroke = Instance.new("UIStroke", InputBg)
+                InputStroke.Color = theme.Outline
+
+                local Input = Instance.new("TextBox", InputBg)
+                Input.Size = UDim2.new(1, -10, 1, 0)
+                Input.Position = UDim2.new(0, 5, 0, 0)
+                Input.BackgroundTransparency = 1
+                Input.Text = ""
+                Input.PlaceholderText = placeholder or "Yazın..."
+                Input.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
+                Input.TextColor3 = theme.Text
+                Input.Font = Enum.Font.Gotham
+                Input.TextSize = 11
+                Input.ClearTextOnFocus = false
+                Input.TextXAlignment = Enum.TextXAlignment.Left
+
+                Input.Focused:Connect(function() Tween(InputStroke, {Color = theme.Accent}, 0.2) end)
+                Input.FocusLost:Connect(function() 
+                    Tween(InputStroke, {Color = theme.Outline}, 0.2)
+                    if callback then pcall(callback, Input.Text) end
+                end)
+            end
+
+            -- 5. Slider
             function SectionObj:NewSlider(sliderName, min, max, default, callback)
                 local Slider = Instance.new("Frame", Page)
-                Slider.Size = UDim2.new(1, 0, 0, 44)
+                Slider.Size = UDim2.new(1, 0, 0, 46)
                 Slider.BackgroundColor3 = theme.ElementBg
                 Instance.new("UICorner", Slider).CornerRadius = UDim.new(0, 5)
                 Instance.new("UIStroke", Slider).Color = theme.Outline
@@ -423,8 +518,8 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Val.TextXAlignment = Enum.TextXAlignment.Right
 
                 local Bar = Instance.new("TextButton", Slider)
-                Bar.Size = UDim2.new(1, -24, 0, 3)
-                Bar.Position = UDim2.new(0, 12, 0, 30)
+                Bar.Size = UDim2.new(1, -24, 0, 4)
+                Bar.Position = UDim2.new(0, 12, 0, 32)
                 Bar.BackgroundColor3 = theme.TopBg
                 Bar.AutoButtonColor = false
                 Bar.Text = ""
@@ -449,18 +544,18 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 end)
             end
 
-            -- 4. Premium Dropdown (Asset Destekli)
+            -- 6. Dropdown
             function SectionObj:NewDropdown(dropName, options, callback)
                 local active = false
                 local Drop = Instance.new("Frame", Page)
-                Drop.Size = UDim2.new(1, 0, 0, 36)
+                Drop.Size = UDim2.new(1, 0, 0, 38)
                 Drop.BackgroundColor3 = theme.ElementBg
                 Drop.ClipsDescendants = true
                 Instance.new("UICorner", Drop).CornerRadius = UDim.new(0, 5)
                 Instance.new("UIStroke", Drop).Color = theme.Outline
 
                 local Btn = Instance.new("TextButton", Drop)
-                Btn.Size = UDim2.new(1, 0, 0, 36)
+                Btn.Size = UDim2.new(1, 0, 0, 38)
                 Btn.BackgroundTransparency = 1
                 Btn.Text = "  " .. dropName .. " : Seçiniz"
                 Btn.TextColor3 = theme.Text
@@ -476,25 +571,25 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Arrow.ImageColor3 = theme.Text
 
                 local List = Instance.new("ScrollingFrame", Drop)
-                List.Size = UDim2.new(1, -10, 1, -40)
-                List.Position = UDim2.new(0, 5, 0, 38)
+                List.Size = UDim2.new(1, -10, 1, -42)
+                List.Position = UDim2.new(0, 5, 0, 40)
                 List.BackgroundTransparency = 1
                 List.ScrollBarThickness = 0
                 
                 local Layout = Instance.new("UIListLayout", List)
-                Layout.Padding = UDim.new(0, 2)
+                Layout.Padding = UDim.new(0, 3)
 
-                local h = 38 + math.clamp(#options * 26, 0, 120)
+                local h = 40 + math.clamp(#options * 28, 0, 140)
 
                 Btn.MouseButton1Click:Connect(function()
                     active = not active
-                    Tween(Drop, {Size = active and UDim2.new(1, 0, 0, h) or UDim2.new(1, 0, 0, 36)}, 0.2)
+                    Tween(Drop, {Size = active and UDim2.new(1, 0, 0, h) or UDim2.new(1, 0, 0, 38)}, 0.2, Enum.EasingStyle.Quint)
                     Tween(Arrow, {Rotation = active and 180 or 0}, 0.2)
                 end)
 
                 for _, opt in pairs(options) do
                     local O = Instance.new("TextButton", List)
-                    O.Size = UDim2.new(1, 0, 0, 24)
+                    O.Size = UDim2.new(1, 0, 0, 26)
                     O.BackgroundColor3 = theme.TopBg
                     O.Text = opt
                     O.TextColor3 = theme.Text
@@ -504,58 +599,12 @@ function Library.CreateLib(titleText, themeName, toggleKey)
 
                     O.MouseButton1Click:Connect(function()
                         active = false
-                        Tween(Drop, {Size = UDim2.new(1, 0, 0, 36)}, 0.2)
+                        Tween(Drop, {Size = UDim2.new(1, 0, 0, 38)}, 0.2)
                         Tween(Arrow, {Rotation = 0}, 0.2)
                         Btn.Text = "  " .. dropName .. " : " .. opt
                         if callback then pcall(callback, opt) end
                     end)
                 end
-            end
-
-            -- 5. Premium Keybind
-            function SectionObj:NewKeybind(bindName, default, callback)
-                local currentBind = default or Enum.KeyCode.E
-                local Keybind = Instance.new("Frame", Page)
-                Keybind.Size = UDim2.new(1, 0, 0, 36)
-                Keybind.BackgroundColor3 = theme.ElementBg
-                Instance.new("UICorner", Keybind).CornerRadius = UDim.new(0, 5)
-                Instance.new("UIStroke", Keybind).Color = theme.Outline
-
-                local Title = Instance.new("TextLabel", Keybind)
-                Title.Size = UDim2.new(1, -100, 1, 0)
-                Title.Position = UDim2.new(0, 12, 0, 0)
-                Title.BackgroundTransparency = 1
-                Title.Text = bindName
-                Title.TextColor3 = theme.Text
-                Title.Font = Enum.Font.GothamMedium
-                Title.TextSize = 12
-                Title.TextXAlignment = Enum.TextXAlignment.Left
-
-                local BindBtn = Instance.new("TextButton", Keybind)
-                BindBtn.Size = UDim2.new(0, 70, 0, 22)
-                BindBtn.Position = UDim2.new(1, -82, 0.5, -11)
-                BindBtn.BackgroundColor3 = theme.TopBg
-                BindBtn.Text = currentBind.Name
-                BindBtn.TextColor3 = theme.Accent
-                BindBtn.Font = Enum.Font.GothamBold
-                BindBtn.TextSize = 11
-                Instance.new("UICorner", BindBtn).CornerRadius = UDim.new(0, 4)
-                Instance.new("UIStroke", BindBtn).Color = theme.Outline
-
-                local listening = false
-                BindBtn.MouseButton1Click:Connect(function()
-                    listening = true
-                    BindBtn.Text = "..."
-                end)
-
-                UserInputService.InputBegan:Connect(function(input, proc)
-                    if listening and not proc and input.UserInputType == Enum.UserInputType.Keyboard then
-                        listening = false
-                        currentBind = input.KeyCode
-                        BindBtn.Text = currentBind.Name
-                        if callback then pcall(callback, currentBind) end
-                    end
-                end)
             end
 
             return SectionObj
