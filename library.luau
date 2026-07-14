@@ -137,7 +137,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
     ScreenGui.Name = "NexusMainUI"
 
     local MainFrame = Instance.new("CanvasGroup", ScreenGui)
-    MainFrame.Size = UDim2.new(0, 620, 0, 440) -- Modern genişlik artışı
+    MainFrame.Size = UDim2.new(0, 620, 0, 440) 
     MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     MainFrame.BackgroundColor3 = theme.MainBg
@@ -169,7 +169,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
     Title.BackgroundTransparency = 1
     Title.Text = titleText
     Title.TextColor3 = theme.Text
-    Title.TextSize = 14 -- Büyütüldü
+    Title.TextSize = 14 
     Title.Font = Enum.Font.GothamBold
     Title.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -246,7 +246,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
     TabContainer.BackgroundColor3 = theme.TabBg
     TabContainer.BorderSizePixel = 0
     TabContainer.ScrollBarThickness = 0
-    TabContainer.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
+    TabContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
     TabContainer.CanvasSize = UDim2.new(0,0,0,0)
     Instance.new("UIStroke", TabContainer).Color = theme.Outline
     local UIListLayout_Tabs = Instance.new("UIListLayout", TabContainer)
@@ -284,7 +284,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         TabLbl.Text = tabName
         TabLbl.TextColor3 = firstTab and theme.Accent or theme.Text
         TabLbl.Font = Enum.Font.GothamMedium
-        TabLbl.TextSize = 13 -- Büyütüldü
+        TabLbl.TextSize = 13
         TabLbl.TextXAlignment = Enum.TextXAlignment.Left
 
         local Indicator = Instance.new("Frame", TabBtn)
@@ -300,11 +300,11 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         Page.ScrollBarThickness = 3
         Page.ScrollBarImageColor3 = theme.Outline
         Page.Visible = firstTab
-        Page.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
+        Page.AutomaticCanvasSize = Enum.AutomaticSize.Y
         Page.CanvasSize = UDim2.new(0, 0, 0, 0)
 
         local UIListLayout_Page = Instance.new("UIListLayout", Page)
-        UIListLayout_Page.Padding = UDim.new(0, 14) -- Bölümler arası ideal boşluk
+        UIListLayout_Page.Padding = UDim.new(0, 14)
 
         if firstTab then firstTab = false end
 
@@ -331,7 +331,6 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         local TabObj = {}
         
         function TabObj:NewSection(sectionName)
-            -- BÜTÜNSEL HIERARCHY DÜZELTMESİ: Bölüme özel taşıyıcı kutu oluşturuldu
             local SectionContainer = Instance.new("Frame", Page)
             SectionContainer.Size = UDim2.new(1, 0, 0, 0)
             SectionContainer.AutomaticSize = Enum.AutomaticSize.Y
@@ -345,7 +344,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
             SectionLabel.Size = UDim2.new(1, 0, 0, 24)
             SectionLabel.BackgroundTransparency = 1
             SectionLabel.Text = sectionName:upper()
-            SectionLabel.TextColor3 = theme.Accent -- Başlıklar daha net vurgulandı
+            SectionLabel.TextColor3 = theme.Accent
             SectionLabel.TextSize = 12 
             SectionLabel.Font = Enum.Font.GothamBold
             SectionLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -366,7 +365,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 LblText.Text = text
                 LblText.TextColor3 = Color3.fromRGB(190, 190, 190)
                 LblText.Font = Enum.Font.Gotham
-                LblText.TextSize = 13 -- Büyütüldü
+                LblText.TextSize = 13 
                 LblText.TextXAlignment = Enum.TextXAlignment.Left
                 LblText.TextWrapped = true
                 LblText.AutomaticSize = Enum.AutomaticSize.Y
@@ -389,7 +388,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Title.Text = btnName
                 Title.TextColor3 = theme.Text
                 Title.Font = Enum.Font.GothamMedium
-                Title.TextSize = 13 -- Büyütüldü
+                Title.TextSize = 13 
                 Title.TextXAlignment = Enum.TextXAlignment.Left
 
                 local Desc = Instance.new("TextLabel", Button)
@@ -399,7 +398,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Desc.Text = btnDesc
                 Desc.TextColor3 = Color3.fromRGB(140, 140, 140)
                 Desc.Font = Enum.Font.Gotham
-                Desc.TextSize = 11 -- Büyütüldü
+                Desc.TextSize = 11
                 Desc.TextXAlignment = Enum.TextXAlignment.Left
 
                 Button.MouseEnter:Connect(function() Tween(Button, {BackgroundColor3 = theme.HoverBg}, 0.15) end)
@@ -412,7 +411,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 end)
             end
 
-            -- 3. Toggle (Modern Yuvarlatılmış Geçişli Switch)
+            -- 3. Toggle
             function SectionObj:NewToggle(toggleName, default, callback)
                 local state = default or false
                 local Toggle = Instance.new("TextButton", SectionContainer)
@@ -430,7 +429,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Title.Text = toggleName
                 Title.TextColor3 = theme.Text
                 Title.Font = Enum.Font.GothamMedium
-                Title.TextSize = 13 -- Büyütüldü
+                Title.TextSize = 13 
                 Title.TextXAlignment = Enum.TextXAlignment.Left
 
                 local SwitchBg = Instance.new("Frame", Toggle)
@@ -469,7 +468,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Title.Text = boxName
                 Title.TextColor3 = theme.Text
                 Title.Font = Enum.Font.GothamMedium
-                Title.TextSize = 13 -- Büyütüldü
+                Title.TextSize = 13 
                 Title.TextXAlignment = Enum.TextXAlignment.Left
 
                 local InputBg = Instance.new("Frame", Box)
@@ -490,7 +489,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Input.PlaceholderColor3 = Color3.fromRGB(130, 130, 130)
                 Input.TextColor3 = theme.Text
                 Input.Font = Enum.Font.Gotham
-                Input.TextSize = 12 -- Büyütüldü
+                Input.TextSize = 12 
                 Input.ClearTextOnFocus = false
                 Input.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -516,7 +515,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Title.Text = sliderName
                 Title.TextColor3 = theme.Text
                 Title.Font = Enum.Font.GothamMedium
-                Title.TextSize = 13 -- Büyütüldü
+                Title.TextSize = 13 
                 Title.TextXAlignment = Enum.TextXAlignment.Left
 
                 local Val = Instance.new("TextLabel", Slider)
@@ -526,7 +525,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Val.Text = tostring(default)
                 Val.TextColor3 = theme.Accent
                 Val.Font = Enum.Font.GothamBold
-                Val.TextSize = 13 -- Büyütüldü
+                Val.TextSize = 13 
                 Val.TextXAlignment = Enum.TextXAlignment.Right
 
                 local Bar = Instance.new("TextButton", Slider)
@@ -556,7 +555,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 end)
             end
 
-            -- 6. Dropdown (Açılır Menü)
+            -- 6. Dropdown
             function SectionObj:NewDropdown(dropName, options, callback)
                 local active = false
                 local Drop = Instance.new("Frame", SectionContainer)
@@ -572,7 +571,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Btn.Text = "  " .. dropName .. " : Seçiniz"
                 Btn.TextColor3 = theme.Text
                 Btn.Font = Enum.Font.GothamMedium
-                Btn.TextSize = 13 -- Büyütüldü
+                Btn.TextSize = 13 
                 Btn.TextXAlignment = Enum.TextXAlignment.Left
 
                 local Arrow = Instance.new("ImageLabel", Btn)
@@ -587,7 +586,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 List.Position = UDim2.new(0, 6, 0, 42)
                 List.BackgroundTransparency = 1
                 List.ScrollBarThickness = 0
-                List.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y
+                List.AutomaticCanvasSize = Enum.AutomaticSize.Y
                 List.CanvasSize = UDim2.new(0, 0, 0, 0)
                 
                 local Layout = Instance.new("UIListLayout", List)
@@ -611,7 +610,7 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                     O.Text = opt
                     O.TextColor3 = theme.Text
                     O.Font = Enum.Font.Gotham
-                    O.TextSize = 12 -- Büyütüldü
+                    O.TextSize = 12 
                     Instance.new("UICorner", O).CornerRadius = UDim.new(0, 5)
 
                     O.MouseButton1Click:Connect(function()
