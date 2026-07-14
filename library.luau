@@ -246,11 +246,16 @@ function Library.CreateLib(titleText, themeName, toggleKey)
     TabContainer.BackgroundColor3 = theme.TabBg
     TabContainer.BorderSizePixel = 0
     TabContainer.ScrollBarThickness = 0
-    TabContainer.AutomaticCanvasSize = Enum.AutomaticSize.Y
     TabContainer.CanvasSize = UDim2.new(0,0,0,0)
     Instance.new("UIStroke", TabContainer).Color = theme.Outline
+    
     local UIListLayout_Tabs = Instance.new("UIListLayout", TabContainer)
     UIListLayout_Tabs.Padding = UDim.new(0, 3)
+
+    -- Executor-Safe Tab Boyutlandırma
+    UIListLayout_Tabs:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabContainer.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_Tabs.AbsoluteContentSize.Y + 10)
+    end)
 
     local ContentContainer = Instance.new("Frame", MainFrame)
     ContentContainer.Size = UDim2.new(1, -150, 1, -42)
@@ -300,11 +305,15 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         Page.ScrollBarThickness = 3
         Page.ScrollBarImageColor3 = theme.Outline
         Page.Visible = firstTab
-        Page.AutomaticCanvasSize = Enum.AutomaticSize.Y
         Page.CanvasSize = UDim2.new(0, 0, 0, 0)
 
         local UIListLayout_Page = Instance.new("UIListLayout", Page)
         UIListLayout_Page.Padding = UDim.new(0, 14)
+
+        -- Executor-Safe Page Boyutlandırma
+        UIListLayout_Page:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            Page.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_Page.AbsoluteContentSize.Y + 20)
+        end)
 
         if firstTab then firstTab = false end
 
@@ -586,11 +595,15 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 List.Position = UDim2.new(0, 6, 0, 42)
                 List.BackgroundTransparency = 1
                 List.ScrollBarThickness = 0
-                List.AutomaticCanvasSize = Enum.AutomaticSize.Y
                 List.CanvasSize = UDim2.new(0, 0, 0, 0)
                 
                 local Layout = Instance.new("UIListLayout", List)
                 Layout.Padding = UDim.new(0, 4)
+
+                -- Executor-Safe Dropdown Boyutlandırma
+                Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+                    List.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 10)
+                end)
 
                 local maxVisibleItems = 4
                 local itemHeight = 30
