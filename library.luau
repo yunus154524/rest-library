@@ -22,8 +22,9 @@ local Themes = {
     }
 }
 
+
 -- Hazır Modern İkon Kütüphanesi
-local Icons = {
+--local Icons = {
     Close = "rbxassetid://10747384394",
     Minimize = "rbxassetid://10747373151",
     Chevron = "rbxassetid://10747372702",
@@ -34,6 +35,21 @@ local Icons = {
     Shield = "rbxassetid://10747383041",
     Sword = "rbxassetid://10747383161",
     Code = "rbxassetid://10747373151"
+}--
+
+
+-- Modern, Keskin ve Minimal İkon Kütüphanesi
+local Icons = {
+    Close = "rbxassetid://11419731602",     -- X İkonu
+    Minimize = "rbxassetid://11419732128",  -- Eksi İkonu
+    Chevron = "rbxassetid://11419731872",   -- Aşağı Ok
+    Info = "rbxassetid://11419731998",      -- Bilgi / Ünlem
+    Home = "rbxassetid://11419732057",      -- Ev / Ana Sayfa
+    Settings = "rbxassetid://11419732296",  -- Çark / Ayarlar
+    User = "rbxassetid://11419732525",      -- İnsan / Profil
+    Shield = "rbxassetid://11419732386",    -- Kalkan / Güvenlik
+    Sword = "rbxassetid://11419732463",     -- Kılıç / Combat
+    Code = "rbxassetid://11419731737"       -- Kod / Script
 }
 
 local function GetIcon(iconInput)
