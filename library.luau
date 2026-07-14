@@ -81,12 +81,13 @@ function Library:Notify(title, text, duration)
     duration = duration or 3
     local theme = Themes.Dark 
     
-    local NotifFrame = Instance.new("CanvasGroup", NotifContainer)
+    local NotifFrame = Instance.new("Frame", NotifContainer)
     NotifFrame.Size = UDim2.new(1, 0, 0, 65)
     NotifFrame.BackgroundColor3 = theme.MainBg
-    NotifFrame.GroupTransparency = 1
     Instance.new("UICorner", NotifFrame).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", NotifFrame).Color = theme.Outline
+    local stroke = Instance.new("UIStroke", NotifFrame)
+    stroke.Color = theme.Outline
+    stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     
     local NotifIcon = Instance.new("ImageLabel", NotifFrame)
     NotifIcon.Size = UDim2.new(0, 20, 0, 20)
@@ -116,12 +117,13 @@ function Library:Notify(title, text, duration)
     TextLbl.TextXAlignment = Enum.TextXAlignment.Left
     TextLbl.TextWrapped = true
 
-    NotifFrame.Position = UDim2.new(0, 50, 0, 0)
-    Tween(NotifFrame, {GroupTransparency = 0, Position = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Quint)
+    -- Kayarak gelme animasyonu (CanvasGroup hatasını tamamen çözer)
+    NotifFrame.Position = UDim2.new(1, 20, 0, 0)
+    Tween(NotifFrame, {Position = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Quint)
     
     task.spawn(function()
         task.wait(duration)
-        local out = Tween(NotifFrame, {GroupTransparency = 1, Position = UDim2.new(0, 20, 0, 0)}, 0.2, Enum.EasingStyle.Quad)
+        local out = Tween(NotifFrame, {Position = UDim2.new(1, 20, 0, 0)}, 0.3, Enum.EasingStyle.Quad)
         out.Completed:Wait()
         NotifFrame:Destroy()
     end)
@@ -136,32 +138,43 @@ function Library.CreateLib(titleText, themeName, toggleKey)
     local ScreenGui = GetSafeGui()
     ScreenGui.Name = "NexusMainUI"
 
-    local MainFrame = Instance.new("CanvasGroup", ScreenGui)
+    -- Frame'e dönüştürüldü, CanvasGroup bug'larından kurtulduk
+    local MainFrame = Instance.new("Frame", ScreenGui)
     MainFrame.Size = UDim2.new(0, 620, 0, 440) 
     MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
     MainFrame.BackgroundColor3 = theme.MainBg
-    MainFrame.GroupTransparency = 1
-    MainFrame.ClipsDescendants = true
     Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
-    Instance.new("UIStroke", MainFrame).Color = theme.Outline
+    
+    local MainStroke = Instance.new("UIStroke", MainFrame)
+    MainStroke.Color = theme.Outline
+    MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
     local UiScale = Instance.new("UIScale", MainFrame)
-    UiScale.Scale = 0.96
+    UiScale.Scale = 0.85
 
-    Tween(MainFrame, {GroupTransparency = 0}, 0.25, Enum.EasingStyle.Quint)
-    Tween(UiScale, {Scale = 1}, 0.25, Enum.EasingStyle.Quint)
+    -- Sadece Scale ile Smooth Pop-in açılışı
+    Tween(UiScale, {Scale = 1}, 0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 
+    -- Üst Çubuk (Topbar) Köşe Ayarları
     local Topbar = Instance.new("Frame", MainFrame)
     Topbar.Size = UDim2.new(1, 0, 0, 42)
     Topbar.BackgroundColor3 = theme.TopBg
     Topbar.BorderSizePixel = 0
+    Instance.new("UICorner", Topbar).CornerRadius = UDim.new(0, 8)
+    
+    local TopbarFiller = Instance.new("Frame", Topbar)
+    TopbarFiller.Size = UDim2.new(1, 0, 0, 8)
+    TopbarFiller.Position = UDim2.new(0, 0, 1, -8)
+    TopbarFiller.BackgroundColor3 = theme.TopBg
+    TopbarFiller.BorderSizePixel = 0
 
     local Line = Instance.new("Frame", Topbar)
     Line.Size = UDim2.new(1, 0, 0, 1)
     Line.Position = UDim2.new(0, 0, 1, -1)
     Line.BackgroundColor3 = theme.Outline
     Line.BorderSizePixel = 0
+    Line.ZIndex = 2
 
     local Title = Instance.new("TextLabel", Topbar)
     Title.Size = UDim2.new(1, -100, 1, 0)
@@ -196,29 +209,33 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         
         if uiVisible then
             MainFrame.Visible = true
-            Tween(MainFrame, {GroupTransparency = 0}, 0.2, Enum.EasingStyle.Quad)
-            local t = Tween(UiScale, {Scale = 1}, 0.2, Enum.EasingStyle.Quad)
-            t.Completed:Wait()
+            Tween(UiScale, {Scale = 1}, 0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+            task.wait(0.25)
         else
-            Tween(MainFrame, {GroupTransparency = 1}, 0.18, Enum.EasingStyle.Quad)
-            local t = Tween(UiScale, {Scale = 0.96}, 0.18, Enum.EasingStyle.Quad)
-            t.Completed:Wait()
+            Tween(UiScale, {Scale = 0.85}, 0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+            task.wait(0.15)
             if not uiVisible then MainFrame.Visible = false end
         end
         animating = false
     end
 
     CloseBtn.MouseButton1Click:Connect(function()
+        if animating then return end
         animating = true
-        Tween(MainFrame, {GroupTransparency = 1}, 0.15)
-        local t = Tween(UiScale, {Scale = 0.95}, 0.15)
-        t.Completed:Wait()
+        Tween(UiScale, {Scale = 0.85}, 0.15, Enum.EasingStyle.Quad)
+        task.wait(0.15)
         ScreenGui:Destroy()
     end)
 
     MinBtn.MouseButton1Click:Connect(ToggleUI)
-    UserInputService.InputBegan:Connect(function(input, processed)
-        if not processed and input.KeyCode == toggleKey then ToggleUI() end
+    
+    -- SHIFT LOCK DÜZELTMESİ: Chat'te yazmıyorken çalışır, Shift Lock ile çakışmaz!
+    UserInputService.InputBegan:Connect(function(input)
+        if input.KeyCode == toggleKey then 
+            if not UserInputService:GetFocusedTextBox() then
+                ToggleUI() 
+            end
+        end
     end)
 
     local dragging, dragInput, dragStart, startPos
@@ -240,19 +257,41 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         end
     end)
 
-    local TabContainer = Instance.new("ScrollingFrame", MainFrame)
-    TabContainer.Size = UDim2.new(0, 150, 1, -42)
-    TabContainer.Position = UDim2.new(0, 0, 0, 42)
-    TabContainer.BackgroundColor3 = theme.TabBg
+    -- Tab Arka Planı (Köşe ovallikleri için)
+    local TabBg = Instance.new("Frame", MainFrame)
+    TabBg.Size = UDim2.new(0, 150, 1, -42)
+    TabBg.Position = UDim2.new(0, 0, 0, 42)
+    TabBg.BackgroundColor3 = theme.TabBg
+    TabBg.BorderSizePixel = 0
+    Instance.new("UICorner", TabBg).CornerRadius = UDim.new(0, 8)
+
+    local TabFillerTop = Instance.new("Frame", TabBg)
+    TabFillerTop.Size = UDim2.new(1, 0, 0, 8)
+    TabFillerTop.BackgroundColor3 = theme.TabBg
+    TabFillerTop.BorderSizePixel = 0
+
+    local TabFillerRight = Instance.new("Frame", TabBg)
+    TabFillerRight.Size = UDim2.new(0, 8, 1, 0)
+    TabFillerRight.Position = UDim2.new(1, -8, 0, 0)
+    TabFillerRight.BackgroundColor3 = theme.TabBg
+    TabFillerRight.BorderSizePixel = 0
+
+    local TabContainer = Instance.new("ScrollingFrame", TabBg)
+    TabContainer.Size = UDim2.new(1, 0, 1, 0)
+    TabContainer.BackgroundTransparency = 1
     TabContainer.BorderSizePixel = 0
     TabContainer.ScrollBarThickness = 0
     TabContainer.CanvasSize = UDim2.new(0,0,0,0)
-    Instance.new("UIStroke", TabContainer).Color = theme.Outline
     
+    local TabStroke = Instance.new("Frame", TabBg)
+    TabStroke.Size = UDim2.new(0, 1, 1, 0)
+    TabStroke.Position = UDim2.new(1, -1, 0, 0)
+    TabStroke.BackgroundColor3 = theme.Outline
+    TabStroke.BorderSizePixel = 0
+
     local UIListLayout_Tabs = Instance.new("UIListLayout", TabContainer)
     UIListLayout_Tabs.Padding = UDim.new(0, 3)
 
-    -- Executor-Safe Tab Boyutlandırma
     UIListLayout_Tabs:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
         TabContainer.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_Tabs.AbsoluteContentSize.Y + 10)
     end)
@@ -310,7 +349,6 @@ function Library.CreateLib(titleText, themeName, toggleKey)
         local UIListLayout_Page = Instance.new("UIListLayout", Page)
         UIListLayout_Page.Padding = UDim.new(0, 14)
 
-        -- Executor-Safe Page Boyutlandırma
         UIListLayout_Page:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             Page.CanvasSize = UDim2.new(0, 0, 0, UIListLayout_Page.AbsoluteContentSize.Y + 20)
         end)
@@ -388,7 +426,9 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Button.Text = ""
                 Button.AutoButtonColor = false
                 Instance.new("UICorner", Button).CornerRadius = UDim.new(0, 6)
-                Instance.new("UIStroke", Button).Color = theme.Outline
+                local stroke = Instance.new("UIStroke", Button)
+                stroke.Color = theme.Outline
+                stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
                 local Title = Instance.new("TextLabel", Button)
                 Title.Size = UDim2.new(1, -20, 0.5, 0)
@@ -429,7 +469,9 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Toggle.Text = ""
                 Toggle.AutoButtonColor = false
                 Instance.new("UICorner", Toggle).CornerRadius = UDim.new(0, 6)
-                Instance.new("UIStroke", Toggle).Color = theme.Outline
+                local stroke = Instance.new("UIStroke", Toggle)
+                stroke.Color = theme.Outline
+                stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
                 local Title = Instance.new("TextLabel", Toggle)
                 Title.Size = UDim2.new(1, -70, 1, 0)
@@ -468,7 +510,9 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Box.Size = UDim2.new(1, 0, 0, 44)
                 Box.BackgroundColor3 = theme.ElementBg
                 Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 6)
-                Instance.new("UIStroke", Box).Color = theme.Outline
+                local stroke = Instance.new("UIStroke", Box)
+                stroke.Color = theme.Outline
+                stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
                 local Title = Instance.new("TextLabel", Box)
                 Title.Size = UDim2.new(0.5, 0, 1, 0)
@@ -515,7 +559,9 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Slider.Size = UDim2.new(1, 0, 0, 50)
                 Slider.BackgroundColor3 = theme.ElementBg
                 Instance.new("UICorner", Slider).CornerRadius = UDim.new(0, 6)
-                Instance.new("UIStroke", Slider).Color = theme.Outline
+                local stroke = Instance.new("UIStroke", Slider)
+                stroke.Color = theme.Outline
+                stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
                 local Title = Instance.new("TextLabel", Slider)
                 Title.Size = UDim2.new(1, -10, 0, 22)
@@ -572,7 +618,9 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 Drop.BackgroundColor3 = theme.ElementBg
                 Drop.ClipsDescendants = true
                 Instance.new("UICorner", Drop).CornerRadius = UDim.new(0, 6)
-                Instance.new("UIStroke", Drop).Color = theme.Outline
+                local stroke = Instance.new("UIStroke", Drop)
+                stroke.Color = theme.Outline
+                stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
                 local Btn = Instance.new("TextButton", Drop)
                 Btn.Size = UDim2.new(1, 0, 0, 40)
@@ -600,7 +648,6 @@ function Library.CreateLib(titleText, themeName, toggleKey)
                 local Layout = Instance.new("UIListLayout", List)
                 Layout.Padding = UDim.new(0, 4)
 
-                -- Executor-Safe Dropdown Boyutlandırma
                 Layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
                     List.CanvasSize = UDim2.new(0, 0, 0, Layout.AbsoluteContentSize.Y + 10)
                 end)
