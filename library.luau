@@ -23,19 +23,7 @@ local Themes = {
 }
 
 
--- Hazır Modern İkon Kütüphanesi
---local Icons = {
-    Close = "rbxassetid://10747384394",
-    Minimize = "rbxassetid://10747373151",
-    Chevron = "rbxassetid://10747372702",
-    Info = "rbxassetid://10747379701",
-    Home = "rbxassetid://10747381515",
-    Settings = "rbxassetid://10747383274",
-    User = "rbxassetid://10747384318",
-    Shield = "rbxassetid://10747383041",
-    Sword = "rbxassetid://10747383161",
-    Code = "rbxassetid://10747373151"
-}--
+
 
 
 -- Modern, Keskin ve Minimal İkon Kütüphanesi
